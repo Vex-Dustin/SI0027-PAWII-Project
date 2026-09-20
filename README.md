@@ -27,7 +27,7 @@ Topik SPA (Pertemuan 17-28) disediakan dalam dua varian stack, masing-masing di 
 | Pertemuan | Pokok Bahasan | Folder | Selesai |
 |---|---|---|---|
 | 1 | Full Stack Development & Arsitektur Aplikasi Web Decoupled | [`pertemuan-01-full-stack-arsitektur-decoupled`](pertemuan-01-full-stack-arsitektur-decoupled) |  |
-| 2 | UI/UX Design (Figma) & Ekosistem Deployment Modern (PaaS) | [`pertemuan-02-uiux-figma-deployment-paas`](pertemuan-02-uiux-figma-deployment-paas) |  |
+| 2 | UI/UX Design (Figma) & Ekosistem Deployment Modern (PaaS) | [`pertemuan-02-uiux-figma-deployment-paas`](pertemuan-02-uiux-figma-deployment-paas) | Selesai |
 | 3, 4 | Membangun RESTful API dengan Express.js | [`pertemuan-03-04-restful-api-expressjs`](pertemuan-03-04-restful-api-expressjs) |  |
 | 5 | Middleware & Konfigurasi Backend | [`pertemuan-05-middleware-konfigurasi-backend`](pertemuan-05-middleware-konfigurasi-backend) |  |
 | 6, 7 | Arsitektur Backend Terstruktur (MVC/Layered) | [`pertemuan-06-07-arsitektur-mvc-layered`](pertemuan-06-07-arsitektur-mvc-layered) |  |

@@ -10,22 +10,102 @@
 /* TODO 1: beri latar belakang gelap & padding pada .header, .logo bold & besar,
    nav rata kanan dengan jarak antar link */
 .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1a1a2e;
+  padding: 16px 40px;
+}
+
+.header .logo {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.header nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 24px;
+}
+
+.header nav a {
+  color: #f0f0f0;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.header nav a:hover {
+  color: #ff6b6b;
 }
 
 /* TODO 2: buat .hero rata tengah, judul besar (h1), tombol .cta menonjol dengan
    warna latar mencolok dan padding yang nyaman diklik */
 .hero {
+  text-align: center;
+  padding: 80px 24px;
+  background-color: #f7f7fb;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  color: #1a1a2e;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  color: #444;
+  max-width: 600px;
+  margin: 0 auto 32px;
 }
 
 .cta {
+  background-color: #ff6b6b;
+  color: #ffffff;
+  border: none;
+  padding: 14px 32px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.cta:hover {
+  background-color: #e85555;
 }
 
 /* TODO 3: buat .features menjadi grid 3 kolom dengan jarak antar kartu,
    .feature-card diberi latar belakang lembut & sudut membulat */
 .features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  padding: 60px 40px;
 }
 
 .feature-card {
+  background-color: #f0f2fa;
+  border-radius: 12px;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.feature-card h3 {
+  margin-bottom: 12px;
+  color: #1a1a2e;
+}
+
+.feature-card p {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 700px) {
+  .features {
+    grid-template-columns: 1fr;
+  }
 }
 
 .footer {

@@ -1,0 +1,219 @@
+{
+    "info": {
+        "_postman_id": "a8f1b2c3-d4e5-4f6a-8b9c-0123456789ab",
+        "name": "PAWII - Donghua API",
+        "description": "Mini Project: Collection Postman untuk testing RESTful API Donghua (judul, rilis, episode, genre).",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "GET All Donghua",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "// Test 1: Memeriksa HTTP Status Code 200",
+                            "pm.test('Status code adalah 200', function () {",
+                            "  pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "// Test 2: Memastikan response berupa Array",
+                            "pm.test('Response berupa array', function () {",
+                            "  const jsonData = pm.response.json();",
+                            "  pm.expect(jsonData).to.be.an('array');",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/donghua",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "donghua"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "POST Tambah Donghua",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "// Test 1: Memeriksa HTTP Status Code 201 (Created)",
+                            "pm.test('Status code adalah 201', function () {",
+                            "  pm.response.to.have.status(201);",
+                            "});",
+                            "",
+                            "// Test 2: Simpan ID data baru ke environment variable 'donghuaId'",
+                            "const jsonData = pm.response.json();",
+                            "pm.environment.set('donghuaId', jsonData.id);"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"judul\": \"Swallowed Star\",\n  \"rilis\": \"2020\",\n  \"episode\": 130,\n  \"genre\": \"Action, Sci-Fi\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/donghua",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "donghua"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "GET Satu Donghua",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "// Test 1: Memeriksa HTTP Status Code 200",
+                            "pm.test('Status code adalah 200', function () {",
+                            "  pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "// Test 2: Memastikan data memiliki properti 'judul'",
+                            "pm.test('Data memiliki properti judul', function () {",
+                            "  const jsonData = pm.response.json();",
+                            "  pm.expect(jsonData).to.have.property('judul');",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/donghua/{{donghuaId}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "donghua",
+                        "{{donghuaId}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "PUT Update Donghua",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "// Test 1: Memeriksa HTTP Status Code 200",
+                            "pm.test('Status code adalah 200', function () {",
+                            "  pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "// Test 2: Memastikan episode berhasil diperbarui",
+                            "pm.test('Episode berhasil diperbarui', function () {",
+                            "  const jsonData = pm.response.json();",
+                            "  pm.expect(jsonData.episode).to.eql(135);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"episode\": 135\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/donghua/{{donghuaId}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "donghua",
+                        "{{donghuaId}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "DELETE Donghua",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "// Test 1: Memeriksa HTTP Status Code 200",
+                            "pm.test('Status code adalah 200', function () {",
+                            "  pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "// Test 2: Memastikan pesan konfirmasi hapus sesuai",
+                            "pm.test('Pesan konfirmasi hapus sesuai', function () {",
+                            "  const jsonData = pm.response.json();",
+                            "  pm.expect(jsonData.message).to.eql('Data film berhasil dihapus');",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/donghua/{{donghuaId}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "donghua",
+                        "{{donghuaId}}"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ]
+}

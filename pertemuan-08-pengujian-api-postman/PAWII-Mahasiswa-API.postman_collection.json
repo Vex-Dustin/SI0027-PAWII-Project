@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "PAWII - Mahasiswa API (Starter)",
-    "description": "Mini Project Pertemuan 8: lengkapi setiap tab Tests (// TODO) pada request di bawah ini.",
+    "name": "PAWII - Mahasiswa API (Completed)",
+    "description": "Mini Project Pertemuan 8: semua TODO telah dilengkapi dengan assertion pm.test().",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -23,9 +23,16 @@
             "type": "text/javascript",
             "exec": [
               "// TODO 1: tambahkan pm.test yang memeriksa status code 200",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
               "",
               "// TODO 2: tambahkan pm.test yang memastikan response berupa array",
-              "// gunakan pm.response.json() dan pm.expect(...).to.be.an('array')"
+              "// gunakan pm.response.json() dan pm.expect(...).to.be.an('array')",
+              "pm.test('Response body is an array', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.be.an('array');",
+              "});"
             ]
           }
         }
@@ -53,10 +60,18 @@
             "type": "text/javascript",
             "exec": [
               "// TODO 3: tambahkan pm.test yang memeriksa status code 201",
+              "pm.test('Status code is 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
               "",
               "// TODO 4: simpan id dari response ke environment variable",
               "// 'mahasiswaId' menggunakan pm.environment.set(), agar dapat",
-              "// dipakai oleh request 'GET Satu Mahasiswa' di bawah ini"
+              "// dipakai oleh request 'GET Satu Mahasiswa' di bawah ini",
+              "pm.test('Save mahasiswaId to environment', function () {",
+              "    const json = pm.response.json();",
+              "    pm.environment.set('mahasiswaId', json.id || json._id);",
+              "    pm.expect(pm.environment.get('mahasiswaId')).to.be.a('string');",
+              "});"
             ]
           }
         }
@@ -80,9 +95,16 @@
             "type": "text/javascript",
             "exec": [
               "// TODO 5: tambahkan pm.test yang memeriksa status code 200",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
               "",
               "// TODO 6: tambahkan pm.test yang memastikan data memiliki",
-              "// properti 'nama'"
+              "// properti 'nama'",
+              "pm.test('Response data has property nama', function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.have.property('nama');",
+              "});"
             ]
           }
         }

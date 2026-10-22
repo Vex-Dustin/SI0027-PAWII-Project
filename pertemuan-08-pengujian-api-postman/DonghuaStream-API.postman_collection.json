@@ -1,0 +1,1293 @@
+{
+  "info": {
+    "name": "DonghuaStream - Platform Streaming API",
+    "description": "Postman Collection untuk Project Akhir: Platform Streaming Website Donghua.\n\nFitur yang diuji:\n- Auth (Register & Login)\n- Film / Donghua (CRUD)\n- Episode (Navigasi antar Episode)\n- Watching List & History\n- Rating & Comment (Community)\n\nArsitektur: MongoDB + Express.js REST API\nBase URL: {{base_url}}",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "POST Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 201 Created",
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response harus berupa object JSON",
+                  "pm.test('Response is a JSON object', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.be.an('object');",
+                  "});",
+                  "",
+                  "// Assertion 3: Response memiliki properti message",
+                  "pm.test('Response has message property', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('message');",
+                  "});",
+                  "",
+                  "// Assertion 4: Response memiliki data user dengan property yang benar",
+                  "pm.test('Response data has user properties', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data).to.have.property('_id');",
+                  "    pm.expect(json.data).to.have.property('username');",
+                  "    pm.expect(json.data).to.have.property('email');",
+                  "    pm.expect(json.data).to.not.have.property('password');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"donghua_fan\",\n  \"email\": \"fan@donghua.com\",\n  \"password\": \"password123\",\n  \"role\": \"user\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "POST Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response memiliki token JWT",
+                  "pm.test('Response has JWT token', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('token');",
+                  "    pm.expect(json.token).to.be.a('string');",
+                  "    pm.expect(json.token.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "// Assertion 3: Simpan token ke environment variable untuk request berikutnya",
+                  "pm.test('Token saved to environment', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.environment.set('token', json.token);",
+                  "    pm.expect(pm.environment.get('token')).to.equal(json.token);",
+                  "});",
+                  "",
+                  "// Assertion 4: Simpan userId ke environment variable",
+                  "pm.test('User ID saved to environment', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.environment.set('userId', json.data._id);",
+                  "    pm.expect(pm.environment.get('userId')).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"fan@donghua.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "POST Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response memiliki token JWT",
+                  "pm.test('Response has JWT token', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('token');",
+                  "    pm.expect(json.token).to.be.a('string');",
+                  "});",
+                  "",
+                  "// Assertion 3: User memiliki role admin",
+                  "pm.test('Logged in user is admin', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data.role).to.equal('admin');",
+                  "});",
+                  "",
+                  "// Assertion 4: Simpan admin token ke environment variable",
+                  "pm.test('Admin token saved to environment', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.environment.set('adminToken', json.token);",
+                  "    pm.expect(pm.environment.get('adminToken')).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@donghua.com\",\n  \"password\": \"adminpassword\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🎬 Film (Donghua)",
+      "item": [
+        {
+          "name": "GET All Film",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response adalah object dengan properti data berupa array",
+                  "pm.test('Response data is an array', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.be.an('object');",
+                  "    pm.expect(json.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Assertion 3: Setiap item film memiliki properti yang benar",
+                  "pm.test('Each film item has required properties', function () {",
+                  "    const json = pm.response.json();",
+                  "    if (json.data.length > 0) {",
+                  "        const film = json.data[0];",
+                  "        pm.expect(film).to.have.property('_id');",
+                  "        pm.expect(film).to.have.property('title');",
+                  "        pm.expect(film).to.have.property('genre');",
+                  "        pm.expect(film).to.have.property('status');",
+                  "    }",
+                  "});",
+                  "",
+                  "// Assertion 4: Response memiliki total count",
+                  "pm.test('Response has total count', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('total');",
+                  "    pm.expect(json.total).to.be.a('number');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/films?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "films"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST Tambah Film (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 201 Created",
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response memiliki data film yang baru dibuat",
+                  "pm.test('Response has new film data', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data).to.be.an('object');",
+                  "    pm.expect(json.data).to.have.property('_id');",
+                  "    pm.expect(json.data).to.have.property('title');",
+                  "});",
+                  "",
+                  "// Assertion 3: Title film sesuai dengan yang dikirim",
+                  "pm.test('Film title matches request body', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data.title).to.equal('Battle Through the Heavens');",
+                  "});",
+                  "",
+                  "// Assertion 4: Simpan filmId ke environment variable",
+                  "pm.test('Film ID saved to environment', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.environment.set('filmId', json.data._id);",
+                  "    pm.expect(pm.environment.get('filmId')).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Battle Through the Heavens\",\n  \"description\": \"Xiao Yan adalah seorang yang pernah memiliki bakat luar biasa, namun kehilangan kemampuannya. Ia kemudian bertekad untuk menemukan kembali kekuatannya.\",\n  \"genre\": [\"Action\", \"Fantasy\", \"Cultivation\"],\n  \"status\": \"ongoing\",\n  \"totalEpisodes\": 104,\n  \"releaseYear\": 2018,\n  \"studio\": \"Shanghai Motion Magic\",\n  \"coverImage\": \"https://example.com/images/btth.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/films",
+              "host": ["{{base_url}}"],
+              "path": ["api", "films"]
+            }
+          }
+        },
+        {
+          "name": "GET Detail Film by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response memiliki properti data film",
+                  "pm.test('Response has film data object', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data).to.be.an('object');",
+                  "});",
+                  "",
+                  "// Assertion 3: Film memiliki semua properti yang diperlukan",
+                  "pm.test('Film has all required properties', function () {",
+                  "    const film = pm.response.json().data;",
+                  "    pm.expect(film).to.have.property('_id');",
+                  "    pm.expect(film).to.have.property('title');",
+                  "    pm.expect(film).to.have.property('genre');",
+                  "    pm.expect(film).to.have.property('description');",
+                  "    pm.expect(film).to.have.property('status');",
+                  "    pm.expect(film).to.have.property('totalEpisodes');",
+                  "});",
+                  "",
+                  "// Assertion 4: ID film sesuai dengan yang diminta",
+                  "pm.test('Film ID matches environment variable', function () {",
+                  "    const film = pm.response.json().data;",
+                  "    pm.expect(film._id).to.equal(pm.environment.get('filmId'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/films/{{filmId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "films", "{{filmId}}"]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Film (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response memiliki data film yang telah diupdate",
+                  "pm.test('Response has updated film data', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data).to.be.an('object');",
+                  "});",
+                  "",
+                  "// Assertion 3: Status film berhasil diupdate",
+                  "pm.test('Film status updated to completed', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data.status).to.equal('completed');",
+                  "});",
+                  "",
+                  "// Assertion 4: Response memiliki pesan sukses",
+                  "pm.test('Response has success message', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('message');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"completed\",\n  \"totalEpisodes\": 104\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/films/{{filmId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "films", "{{filmId}}"]
+            }
+          }
+        },
+        {
+          "name": "GET Film by Genre",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response data adalah array",
+                  "pm.test('Response data is an array', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Assertion 3: Setiap film dalam hasil memiliki genre yang diminta",
+                  "pm.test('All films have the requested genre', function () {",
+                  "    const json = pm.response.json();",
+                  "    json.data.forEach(function(film) {",
+                  "        pm.expect(film.genre).to.include('Action');",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/films?genre=Action",
+              "host": ["{{base_url}}"],
+              "path": ["api", "films"],
+              "query": [{ "key": "genre", "value": "Action" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📺 Episode",
+      "item": [
+        {
+          "name": "POST Tambah Episode (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 201 Created",
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "// Assertion 2: Episode memiliki properti navigasi prev/next",
+                  "pm.test('Episode has navigation properties', function () {",
+                  "    const episode = pm.response.json().data;",
+                  "    pm.expect(episode).to.have.property('episodeNumber');",
+                  "    pm.expect(episode).to.have.property('filmId');",
+                  "    pm.expect(episode).to.have.property('videoUrl');",
+                  "});",
+                  "",
+                  "// Assertion 3: Episode memiliki judul",
+                  "pm.test('Episode has title', function () {",
+                  "    const episode = pm.response.json().data;",
+                  "    pm.expect(episode).to.have.property('title');",
+                  "    pm.expect(episode.title).to.be.a('string');",
+                  "});",
+                  "",
+                  "// Assertion 4: Simpan episodeId ke environment variable",
+                  "pm.test('Episode ID saved to environment', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.environment.set('episodeId', json.data._id);",
+                  "    pm.expect(pm.environment.get('episodeId')).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filmId\": \"{{filmId}}\",\n  \"episodeNumber\": 1,\n  \"title\": \"Episode 1 - Kebangkitan Xiao Yan\",\n  \"description\": \"Xiao Yan kehilangan kemampuannya dan bertekad untuk mendapatkannya kembali.\",\n  \"videoUrl\": \"https://stream.donghua.com/btth/ep001.m3u8\",\n  \"duration\": 1440,\n  \"thumbnail\": \"https://example.com/thumbnails/btth-ep1.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/episodes",
+              "host": ["{{base_url}}"],
+              "path": ["api", "episodes"]
+            }
+          }
+        },
+        {
+          "name": "GET Episode List by Film",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response data adalah array episode",
+                  "pm.test('Response data is an array of episodes', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Assertion 3: Setiap episode memiliki episodeNumber yang berurutan",
+                  "pm.test('Episodes have sequential numbers', function () {",
+                  "    const json = pm.response.json();",
+                  "    if (json.data.length > 1) {",
+                  "        pm.expect(json.data[0].episodeNumber).to.be.lessThan(json.data[1].episodeNumber);",
+                  "    }",
+                  "});",
+                  "",
+                  "// Assertion 4: Setiap episode memiliki filmId yang sama",
+                  "pm.test('All episodes belong to the same film', function () {",
+                  "    const json = pm.response.json();",
+                  "    const filmId = pm.environment.get('filmId');",
+                  "    json.data.forEach(function(ep) {",
+                  "        pm.expect(ep.filmId).to.equal(filmId);",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/films/{{filmId}}/episodes",
+              "host": ["{{base_url}}"],
+              "path": ["api", "films", "{{filmId}}", "episodes"]
+            }
+          }
+        },
+        {
+          "name": "GET Detail Episode (dengan Navigasi Prev/Next)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Episode memiliki data navigasi prevEpisode dan nextEpisode",
+                  "pm.test('Episode has navigation data (prevEpisode & nextEpisode)', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('prevEpisode');",
+                  "    pm.expect(json).to.have.property('nextEpisode');",
+                  "});",
+                  "",
+                  "// Assertion 3: Episode memiliki videoUrl untuk streaming",
+                  "pm.test('Episode has valid video URL for streaming', function () {",
+                  "    const episode = pm.response.json().data;",
+                  "    pm.expect(episode).to.have.property('videoUrl');",
+                  "    pm.expect(episode.videoUrl).to.be.a('string');",
+                  "    pm.expect(episode.videoUrl.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "// Assertion 4: Episode memiliki duration dalam detik",
+                  "pm.test('Episode has duration in seconds', function () {",
+                  "    const episode = pm.response.json().data;",
+                  "    pm.expect(episode).to.have.property('duration');",
+                  "    pm.expect(episode.duration).to.be.a('number');",
+                  "    pm.expect(episode.duration).to.be.greaterThan(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/episodes/{{episodeId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "episodes", "{{episodeId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📋 Watching List",
+      "item": [
+        {
+          "name": "POST Tambah ke Watching List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 201 Created",
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "// Assertion 2: Film berhasil ditambahkan ke watching list",
+                  "pm.test('Film added to watching list', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data).to.be.an('object');",
+                  "    pm.expect(json.data).to.have.property('userId');",
+                  "    pm.expect(json.data).to.have.property('filmId');",
+                  "});",
+                  "",
+                  "// Assertion 3: Status dalam watching list adalah 'plan_to_watch'",
+                  "pm.test('Default status is plan_to_watch', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data.status).to.equal('plan_to_watch');",
+                  "});",
+                  "",
+                  "// Assertion 4: Simpan watchlistId ke environment",
+                  "pm.test('Watchlist ID saved to environment', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.environment.set('watchlistId', json.data._id);",
+                  "    pm.expect(pm.environment.get('watchlistId')).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filmId\": \"{{filmId}}\",\n  \"status\": \"plan_to_watch\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/watchlist",
+              "host": ["{{base_url}}"],
+              "path": ["api", "watchlist"]
+            }
+          }
+        },
+        {
+          "name": "GET Watching List User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response data adalah array watching list",
+                  "pm.test('Response data is an array', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Assertion 3: Setiap item watching list memiliki properti film yang di-populate",
+                  "pm.test('Each watchlist item has populated film data', function () {",
+                  "    const json = pm.response.json();",
+                  "    if (json.data.length > 0) {",
+                  "        const item = json.data[0];",
+                  "        pm.expect(item).to.have.property('filmId');",
+                  "        pm.expect(item).to.have.property('status');",
+                  "        pm.expect(item).to.have.property('addedAt');",
+                  "    }",
+                  "});",
+                  "",
+                  "// Assertion 4: Watching list milik user yang sedang login",
+                  "pm.test('Watchlist belongs to current user', function () {",
+                  "    const json = pm.response.json();",
+                  "    const userId = pm.environment.get('userId');",
+                  "    if (json.data.length > 0) {",
+                  "        pm.expect(json.data[0].userId).to.equal(userId);",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/watchlist",
+              "host": ["{{base_url}}"],
+              "path": ["api", "watchlist"]
+            }
+          }
+        },
+        {
+          "name": "PATCH Update Status Watching List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Status berhasil diubah menjadi 'watching'",
+                  "pm.test('Status updated to watching', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data.status).to.equal('watching');",
+                  "});",
+                  "",
+                  "// Assertion 3: Response memiliki pesan sukses",
+                  "pm.test('Response has success message', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('message');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"watching\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/watchlist/{{watchlistId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "watchlist", "{{watchlistId}}"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Hapus dari Watching List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response memiliki pesan berhasil dihapus",
+                  "pm.test('Response has deletion success message', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('message');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/watchlist/{{watchlistId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "watchlist", "{{watchlistId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📜 History",
+      "item": [
+        {
+          "name": "POST Catat History Tonton",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 201 Created",
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "// Assertion 2: History memiliki filmId, episodeId, dan userId",
+                  "pm.test('History has filmId, episodeId and userId', function () {",
+                  "    const history = pm.response.json().data;",
+                  "    pm.expect(history).to.have.property('userId');",
+                  "    pm.expect(history).to.have.property('filmId');",
+                  "    pm.expect(history).to.have.property('episodeId');",
+                  "});",
+                  "",
+                  "// Assertion 3: History mencatat waktu tonton (watchedAt)",
+                  "pm.test('History records watchedAt timestamp', function () {",
+                  "    const history = pm.response.json().data;",
+                  "    pm.expect(history).to.have.property('watchedAt');",
+                  "    pm.expect(history.watchedAt).to.be.a('string');",
+                  "});",
+                  "",
+                  "// Assertion 4: Simpan historyId ke environment",
+                  "pm.test('History ID saved to environment', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.environment.set('historyId', json.data._id);",
+                  "    pm.expect(pm.environment.get('historyId')).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filmId\": \"{{filmId}}\",\n  \"episodeId\": \"{{episodeId}}\",\n  \"watchedDuration\": 720,\n  \"totalDuration\": 1440\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/history",
+              "host": ["{{base_url}}"],
+              "path": ["api", "history"]
+            }
+          }
+        },
+        {
+          "name": "GET History Tonton User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response data adalah array history",
+                  "pm.test('Response data is an array', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Assertion 3: History diurutkan terbaru (watchedAt DESC)",
+                  "pm.test('History is sorted by most recent first', function () {",
+                  "    const json = pm.response.json();",
+                  "    if (json.data.length > 1) {",
+                  "        const first = new Date(json.data[0].watchedAt);",
+                  "        const second = new Date(json.data[1].watchedAt);",
+                  "        pm.expect(first.getTime()).to.be.at.least(second.getTime());",
+                  "    }",
+                  "});",
+                  "",
+                  "// Assertion 4: Setiap history item memiliki progress tonton",
+                  "pm.test('Each history item has watch progress', function () {",
+                  "    const json = pm.response.json();",
+                  "    if (json.data.length > 0) {",
+                  "        pm.expect(json.data[0]).to.have.property('watchedDuration');",
+                  "        pm.expect(json.data[0]).to.have.property('totalDuration');",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/history",
+              "host": ["{{base_url}}"],
+              "path": ["api", "history"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Hapus History",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response memiliki pesan berhasil dihapus",
+                  "pm.test('Response confirms history deletion', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('message');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/history/{{historyId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "history", "{{historyId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "⭐ Rating & Comment",
+      "item": [
+        {
+          "name": "POST Beri Rating Film",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 201 Created",
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "// Assertion 2: Rating memiliki nilai antara 1-10",
+                  "pm.test('Rating value is between 1 and 10', function () {",
+                  "    const rating = pm.response.json().data;",
+                  "    pm.expect(rating).to.have.property('score');",
+                  "    pm.expect(rating.score).to.be.at.least(1);",
+                  "    pm.expect(rating.score).to.be.at.most(10);",
+                  "});",
+                  "",
+                  "// Assertion 3: Rating dikaitkan ke film dan user yang benar",
+                  "pm.test('Rating linked to correct film and user', function () {",
+                  "    const rating = pm.response.json().data;",
+                  "    pm.expect(rating.filmId).to.equal(pm.environment.get('filmId'));",
+                  "    pm.expect(rating.userId).to.equal(pm.environment.get('userId'));",
+                  "});",
+                  "",
+                  "// Assertion 4: Simpan ratingId ke environment",
+                  "pm.test('Rating ID saved to environment', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.environment.set('ratingId', json.data._id);",
+                  "    pm.expect(pm.environment.get('ratingId')).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filmId\": \"{{filmId}}\",\n  \"score\": 9\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/ratings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ratings"]
+            }
+          }
+        },
+        {
+          "name": "GET Rating Film (Average & List)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response memiliki averageScore",
+                  "pm.test('Response has averageScore', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('averageScore');",
+                  "    pm.expect(json.averageScore).to.be.a('number');",
+                  "});",
+                  "",
+                  "// Assertion 3: averageScore dalam rentang 0-10",
+                  "pm.test('Average score is in valid range (0-10)', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.averageScore).to.be.at.least(0);",
+                  "    pm.expect(json.averageScore).to.be.at.most(10);",
+                  "});",
+                  "",
+                  "// Assertion 4: Response memiliki total jumlah rating",
+                  "pm.test('Response has total rating count', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('totalRatings');",
+                  "    pm.expect(json.totalRatings).to.be.a('number');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/films/{{filmId}}/ratings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "films", "{{filmId}}", "ratings"]
+            }
+          }
+        },
+        {
+          "name": "POST Tulis Komentar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 201 Created",
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "// Assertion 2: Komentar memiliki properti yang benar",
+                  "pm.test('Comment has required properties', function () {",
+                  "    const comment = pm.response.json().data;",
+                  "    pm.expect(comment).to.have.property('_id');",
+                  "    pm.expect(comment).to.have.property('filmId');",
+                  "    pm.expect(comment).to.have.property('userId');",
+                  "    pm.expect(comment).to.have.property('content');",
+                  "    pm.expect(comment).to.have.property('createdAt');",
+                  "});",
+                  "",
+                  "// Assertion 3: Isi komentar sesuai yang dikirim",
+                  "pm.test('Comment content matches request body', function () {",
+                  "    const comment = pm.response.json().data;",
+                  "    pm.expect(comment.content).to.equal('Anime Donghua terbaik! Ceritanya sangat seru dan animasinya keren.');",
+                  "});",
+                  "",
+                  "// Assertion 4: Simpan commentId ke environment",
+                  "pm.test('Comment ID saved to environment', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.environment.set('commentId', json.data._id);",
+                  "    pm.expect(pm.environment.get('commentId')).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filmId\": \"{{filmId}}\",\n  \"content\": \"Anime Donghua terbaik! Ceritanya sangat seru dan animasinya keren.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/comments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "comments"]
+            }
+          }
+        },
+        {
+          "name": "GET Komentar Film",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response data adalah array komentar",
+                  "pm.test('Response data is an array of comments', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Assertion 3: Setiap komentar memiliki info user (username)",
+                  "pm.test('Each comment has user information', function () {",
+                  "    const json = pm.response.json();",
+                  "    if (json.data.length > 0) {",
+                  "        const comment = json.data[0];",
+                  "        pm.expect(comment).to.have.property('userId');",
+                  "        pm.expect(comment).to.have.property('content');",
+                  "        pm.expect(comment).to.have.property('createdAt');",
+                  "    }",
+                  "});",
+                  "",
+                  "// Assertion 4: Response memiliki total jumlah komentar",
+                  "pm.test('Response has total comment count', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('total');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/films/{{filmId}}/comments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "films", "{{filmId}}", "comments"]
+            }
+          }
+        },
+        {
+          "name": "PUT Edit Komentar (Owner)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Isi komentar telah diupdate",
+                  "pm.test('Comment content updated successfully', function () {",
+                  "    const comment = pm.response.json().data;",
+                  "    pm.expect(comment.content).to.equal('Update: Setelah nonton season 2, makin seru! Rating naik jadi 10/10.');",
+                  "});",
+                  "",
+                  "// Assertion 3: Comment memiliki flag isEdited",
+                  "pm.test('Comment has isEdited flag set to true', function () {",
+                  "    const comment = pm.response.json().data;",
+                  "    pm.expect(comment).to.have.property('isEdited');",
+                  "    pm.expect(comment.isEdited).to.equal(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Update: Setelah nonton season 2, makin seru! Rating naik jadi 10/10.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/comments/{{commentId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "comments", "{{commentId}}"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Hapus Komentar (Admin/Owner)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response memiliki pesan sukses hapus",
+                  "pm.test('Response confirms comment deletion', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('message');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/comments/{{commentId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "comments", "{{commentId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🛡️ Admin",
+      "item": [
+        {
+          "name": "GET Semua User (Admin Only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response data adalah array user",
+                  "pm.test('Response data is an array of users', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Assertion 3: Data user tidak mengekspos password",
+                  "pm.test('User data does not expose password field', function () {",
+                  "    const json = pm.response.json();",
+                  "    if (json.data.length > 0) {",
+                  "        pm.expect(json.data[0]).to.not.have.property('password');",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "users"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Hapus Film (Admin Only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Assertion 1: Status code harus 200 OK",
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Assertion 2: Response memiliki pesan sukses hapus",
+                  "pm.test('Response confirms film deletion', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('message');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/films/{{filmId}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "films", "{{filmId}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

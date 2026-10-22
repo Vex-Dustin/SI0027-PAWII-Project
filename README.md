@@ -31,8 +31,8 @@ Topik SPA (Pertemuan 17-28) disediakan dalam dua varian stack, masing-masing di 
 | 3, 4 | Membangun RESTful API dengan Express.js | [`pertemuan-03-04-restful-api-expressjs`](pertemuan-03-04-restful-api-expressjs) | Selesai |
 | 5 | Middleware & Konfigurasi Backend | [`pertemuan-05-middleware-konfigurasi-backend`](pertemuan-05-middleware-konfigurasi-backend) | Selesai |
 | 6, 7 | Arsitektur Backend Terstruktur (MVC/Layered) | [`pertemuan-06-07-arsitektur-mvc-layered`](pertemuan-06-07-arsitektur-mvc-layered) |  |
-| 8 | Pengujian API dengan Postman Automation | [`pertemuan-08-pengujian-api-postman`](pertemuan-08-pengujian-api-postman) |  |
-| 9, 10 | NoSQL Data Modeling (MongoDB, Mongoose & MongoDB Atlas) | [`pertemuan-09-10-nosql-data-modeling-mongodb`](pertemuan-09-10-nosql-data-modeling-mongodb) |  |
+| 8 | Pengujian API dengan Postman Automation | [`pertemuan-08-pengujian-api-postman`](pertemuan-08-pengujian-api-postman) | Selesai |
+| 9, 10 | NoSQL Data Modeling (MongoDB, Mongoose & MongoDB Atlas) | [`pertemuan-09-10-nosql-data-modeling-mongodb`](pertemuan-09-10-nosql-data-modeling-mongodb) | Selesai |
 | 11, 12 | RESTful API CRUD untuk Data NoSQL | [`pertemuan-11-12-restful-api-crud-nosql`](pertemuan-11-12-restful-api-crud-nosql) |  |
 | 13, 14 | Autentikasi Stateless dengan JWT & Keamanan API | [`pertemuan-13-14-autentikasi-jwt-keamanan-api`](pertemuan-13-14-autentikasi-jwt-keamanan-api) |  |
 | 15, 16 | Ujian Tengah Semester (UTS) | - | - |

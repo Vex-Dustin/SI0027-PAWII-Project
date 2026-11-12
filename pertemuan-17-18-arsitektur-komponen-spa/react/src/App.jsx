@@ -9,6 +9,8 @@ import PageHeader from "./components/PageHeader";
 import SearchBar from "./components/SearchBar";
 import MahasiswaList from "./components/MahasiswaList";
 import Tentang from "./components/Tentang";
+import Profile from "./components/Profile";
+import Footer from "./components/Footer"; 
 
 const DATA_MAHASISWA = [
   { id: 1, nama: "Andi", nim: "2024001" },
@@ -18,14 +20,18 @@ const DATA_MAHASISWA = [
 
 function DaftarMahasiswaPage() {
   // TODO: buat state keyword dengan useState('')
+  const [keyword, setKeyword] = useState('');
 
   // TODO: hitung mahasiswaTersaring - filter DATA_MAHASISWA berdasarkan
   // apakah m.nama.toLowerCase() mengandung keyword.toLowerCase()
 
+
+  const mahasiswaTersaring = DATA_MAHASISWA.filter((m) => m.nama.toLowerCase().includes(keyword.toLowerCase()))
+
   return (
     <>
-      {/* TODO: render <SearchBar keyword={keyword} onSearch={setKeyword} /> */}
-      {/* TODO: render <MahasiswaList mahasiswa={mahasiswaTersaring} /> */}
+      {<SearchBar keyword = {keyword} onSearch ={setKeyword} />}
+      {<MahasiswaList mahasiswa={mahasiswaTersaring} />}
     </>
   );
 }
@@ -37,7 +43,9 @@ function App() {
       <Routes>
         <Route path="/" element={<DaftarMahasiswaPage />} />
         <Route path="/tentang" element={<Tentang />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
+      <Footer />
     </div>
   );
 }

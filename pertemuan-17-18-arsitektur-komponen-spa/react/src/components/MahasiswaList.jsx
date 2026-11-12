@@ -3,14 +3,11 @@
 
 import MahasiswaCard from "./MahasiswaCard";
 
-function MahasiswaList(/* TODO: destructure { mahasiswa } dari props */) {
+function MahasiswaList({mahasiswa}) {
   // TODO: jika mahasiswa.length === 0, kembalikan <p className="empty">Tidak ada mahasiswa yang cocok.</p>
-  const [mahasiswa] = useState([
-    { id: 1, nama: 'Andi', nim: '2024001' },
-    { id: 2, nama: 'Budi', nim: '2024002' },
-  ]);
-
-
+  if(mahasiswa.length === 0){
+    return (<p>Tidak ada mahasiswa yang cocok.</p>)
+  }
   return mahasiswa.map((m) => (
     <MahasiswaCard key={m.id} nama={m.nama} nim={m.nim} />
   ));
